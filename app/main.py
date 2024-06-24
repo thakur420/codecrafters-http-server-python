@@ -1,17 +1,20 @@
 # Uncomment this to pass the first stage
 import socket
+from pathlib import Path
+
 def extract_path(request):
     request_lines = request.splitlines()
     if request_lines:
         request_line = request_lines[0]
         parts = request_line.split()
         if len(parts) > 1:
-            parts = parts[1].split("/")[1:]
-            # print(parts)
-            if parts[0] == "":
-                return ""
-            if parts[0] == "echo":
-                return parts[-1]
+            path = Path(parts[1])
+            if path.resolve() != Path("/user-agent").resolve():
+                return None
+    response = [line for line in request_lines if "User-Agent" in line][0]
+    # print(response)
+    if len(response) > 0 :
+        return response.split(':')[-1].strip()
     return None
 
 def main():
