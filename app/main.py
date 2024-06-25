@@ -7,7 +7,7 @@ def handle_client(client_socket):
         request = client_socket.recv(1024).decode("utf-8")
         print("processing client request")
         time.sleep(10)
-        client_socket.sendall(b"HTTP/1.1 200 OK\r\n\r\n")
+        client_socket.send(b"HTTP/1.1 200 OK\r\n\r\n")
     except Exception as e:
         print(f"Error handling client: {e}")
     finally:
