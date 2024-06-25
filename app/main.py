@@ -14,7 +14,7 @@ def extract_body(request,path):
         return val if val != "echo" else "" 
     if "/user-agent" in path:
         return extract_header(request,"User-Agent")
-    if "/" in path:
+    if len(path) == 1 and "/" in path:
         return ""
     return None
 
