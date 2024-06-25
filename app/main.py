@@ -8,11 +8,14 @@ def extract_header(request,header):
     return None
 
 def extract_body(request,path):
+    # print(path)
     if "/echo" in path :
         val = path.split("/")[-1]
         return val if val != "echo" else "" 
     if "/user-agent" in path:
         return extract_header(request,"User-Agent")
+    if "/" in path:
+        return ""
     return None
 
 def extract_path(request):
