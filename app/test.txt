@@ -1,2 +1,0 @@
-read this file and
-send data to client
