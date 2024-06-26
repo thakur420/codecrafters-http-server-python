@@ -61,10 +61,10 @@ def handle_get_request(request,client_socket):
 # POST Request processing code
 
 def extract_data(request):
-    return request
+    # return request
     str = ""
     for i,line in enumerate(request.splitlines()):
-        if i >= 7: # skip request line and headers 
+        if i >= 5: # skip request line and headers 
             str += line
     return str 
 
