@@ -29,14 +29,14 @@ def extract_path(request):
 def handle_client(client_socket):
     try :
         request = client_socket.recv(1024).decode("utf-8")
-        client_socket.send(b"HTTP/1.1 200 OK\r\n\r\n")
-        # path = extract_path(request)
-        # str = extract_body(request,path)
-        # if str == None:
-        #     client_socket.send(b"HTTP/1.1 404 Not Found\r\n\r\n")
-        # else:
-        #     response = f"HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: {len(str)}\r\n\r\n{str}"
-        #     client_socket.send(response.encode("utf-8")) 
+        # client_socket.send(b"HTTP/1.1 200 OK\r\n\r\n")
+        path = extract_path(request)
+        str = extract_body(request,path)
+        if str == None:
+            client_socket.send(b"HTTP/1.1 404 Not Found\r\n\r\n")
+        else:
+            response = f"HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: {len(str)}\r\n\r\n{str}"
+            client_socket.send(response.encode("utf-8")) 
     except Exception as e:
         print(f"Error handling client: {e}")
     finally:
