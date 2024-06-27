@@ -1,6 +1,7 @@
 import socket
 import concurrent.futures as cf
 import sys
+import gzip
 from pathlib import Path
 
 def extract_path(request):
@@ -64,6 +65,7 @@ def handle_get_request(request,client_socket):
     else:
         content_type = get_content_type(path)
         if get_encoding_type(request):
+            str = gzip.compress(str.encode())
             response = f"HTTP/1.1 200 OK\r\nContent-Encoding: gzip\r\nContent-Type: {content_type}\r\nContent-Length: {len(str)}\r\n\r\n{str}"
         else:
             response = f"HTTP/1.1 200 OK\r\nContent-Type: {content_type}\r\nContent-Length: {len(str)}\r\n\r\n{str}"
