@@ -51,8 +51,10 @@ def get_content_type(path):
 def get_encoding_type(request):
     encoding_header = [line for line in request.splitlines() if "Accept-Encoding" in line]
     if len(encoding_header) > 0:
-        return encoding_header[0].split(":")[-1].strip()
-    return None
+        encoding_type = encoding_header[0].split(":")[-1].strip()
+        if "gzip" in encoding_type:
+            return True
+    return False
 
 def handle_get_request(request,client_socket):
     path = extract_path(request)
@@ -61,7 +63,7 @@ def handle_get_request(request,client_socket):
         client_socket.sendall(b"HTTP/1.1 404 Not Found\r\n\r\n")
     else:
         content_type = get_content_type(path)
-        if get_encoding_type(request) == "gzip":
+        if get_encoding_type(request):
             response = f"HTTP/1.1 200 OK\r\nContent-Encoding: gzip\r\nContent-Type: {content_type}\r\nContent-Length: {len(str)}\r\n\r\n{str}"
         else:
             response = f"HTTP/1.1 200 OK\r\nContent-Type: {content_type}\r\nContent-Length: {len(str)}\r\n\r\n{str}"
