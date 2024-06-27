@@ -48,6 +48,12 @@ def get_content_type(path):
         return "application/octet-stream"
     return "text/plain"
 
+def get_encoding_type(request):
+    encoding_header = [line for line in request.splitlines() if "Accept-Encoding" in line]
+    if len(encoding_header) > 0:
+        return encoding_header[0].split(":")[-1].strip()
+    return None
+
 def handle_get_request(request,client_socket):
     path = extract_path(request)
     str = extract_body(request,path)
@@ -55,7 +61,10 @@ def handle_get_request(request,client_socket):
         client_socket.sendall(b"HTTP/1.1 404 Not Found\r\n\r\n")
     else:
         content_type = get_content_type(path)
-        response = f"HTTP/1.1 200 OK\r\nContent-Type: {content_type}\r\nContent-Length: {len(str)}\r\n\r\n{str}"
+        if get_encoding_type(request) == "gzip":
+            response = f"HTTP/1.1 200 OK\r\nContent-Encoding: gzip\r\nContent-Type: {content_type}\r\nContent-Length: {len(str)}\r\n\r\n{str}"
+        else:
+            response = f"HTTP/1.1 200 OK\r\nContent-Type: {content_type}\r\nContent-Length: {len(str)}\r\n\r\n{str}"
         client_socket.sendall(response.encode("utf-8")) 
 
 # POST Request processing code
@@ -63,6 +72,7 @@ def handle_get_request(request,client_socket):
 def extract_data(request):
     # return request
     str = ""
+    print(request.splitlines())
     for i,line in enumerate(request.splitlines()):
         if i >= 5: # skip request line and headers 
             str += line
