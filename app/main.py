@@ -65,18 +65,17 @@ def handle_get_request(request,client_socket):
     else:
         content_type = get_content_type(path)
         if get_encoding_type(request):
-            str = gzip.compress(str.encode())
-            response = f"HTTP/1.1 200 OK\r\nContent-Encoding: gzip\r\nContent-Type: {content_type}\r\nContent-Length: {len(str)}\r\n\r\n{str}"
+            str = gzip.compress(str.encode("utf-8"))
+            response = f"HTTP/1.1 200 OK\r\nContent-Encoding: gzip\r\nContent-Type: {content_type}\r\nContent-Length: {len(str)}\r\n\r\n".encode("utf-8") + str
         else:
-            response = f"HTTP/1.1 200 OK\r\nContent-Type: {content_type}\r\nContent-Length: {len(str)}\r\n\r\n{str}"
-        client_socket.sendall(response.encode("utf-8")) 
+            response = f"HTTP/1.1 200 OK\r\nContent-Type: {content_type}\r\nContent-Length: {len(str)}\r\n\r\n{str}".encode("utf-8")
+        client_socket.sendall(response) 
 
 # POST Request processing code
 
 def extract_data(request):
     # return request
     str = ""
-    print(request.splitlines())
     for i,line in enumerate(request.splitlines()):
         if i >= 5: # skip request line and headers 
             str += line
@@ -98,7 +97,7 @@ def handle_post_request(request,client_socket):
 # Handle Client Request
 def handle_client(client_socket):
     try :
-        request = client_socket.recv(1024).decode("utf-8")
+        request = client_socket.recv(4096).decode("utf-8")
         if "GET" in request:
             handle_get_request(request,client_socket)
         elif "POST" in request:
